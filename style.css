@@ -1,0 +1,638 @@
+:root {
+    --bg-dark-green: #3a5043; /* Main background color */
+    --panel-light-green: #e0eadf; /* Panel background color */
+    --text-dark: #333;
+    --text-light: #f0f0f0;
+    --border-radius: 15px;
+    --habit-button-active: #5f7a6f; /* Darker green for active habit buttons */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark-green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--text-dark);
+}
+
+.container {
+    background-color: var(--bg-dark-green);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    display: grid;
+    grid-template-rows: auto 1fr; /* Header row, then main content */
+    grid-template-columns: 1fr; /* Single column layout for overall structure */
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px; /* Limit max width for desktop view */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative; /* For FAB positioning */
+}
+
+.tracker-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tracker-header h1 {
+    font-family: 'Permanent Marker', cursive; /* Use Google Font */
+    color: var(--panel-light-green);
+    font-size: 3em;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.tracker-main {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr 2fr; /* Events and top panel / notes and graph */
+    grid-template-rows: auto auto; /* Two rows for content */
+}
+
+.panel {
+    background-color: var(--panel-light-green);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific panel grid placement */
+.events-section {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3; /* Spans both rows on the left */
+}
+
+.top-panel {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.notes-section {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+}
+
+.graph-section {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3; /* Overlaps with notes, will adjust with flex later or specific grid areas */
+    /* Adjusting to match image: notes and graph are side-by-side or stacked */
+    /* For now, let's make them separate columns/rows if possible */
+}
+
+/* Redefining main grid for better layout matching the image */
+.tracker-main {
+    grid-template-columns: 1fr 1.5fr 1.5fr; /* Events | Top Panel/Notes | Graph/Toolkits */
+    grid-template-rows: auto auto; /* Top Row (date/habits) | Bottom Row (Notes/Graph) */
+}
+
+.events-section {
+    grid-column: 1 / 2;
+    grid-row: 1 / 3; /* Stretches vertically */
+}
+
+.top-panel {
+    grid-column: 2 / 4; /* Spans across top of Notes and Graph */
+    grid-row: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px; /* Ensure padding is consistent */
+}
+
+.notes-section {
+    grid-column: 2 / 3; /* Placed in the middle column, bottom row */
+    grid-row: 2 / 3;
+    padding: 20px;
+}
+
+.graph-section {
+    grid-column: 3 / 4; /* Placed in the right column, bottom row */
+    grid-row: 2 / 3;
+    padding: 20px;
+    display: flex; /* To center the graph placeholder content */
+    justify-content: center;
+    align-items: center;
+}
+
+h2 {
+    color: var(--text-dark);
+    font-size: 1.5em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* EVENTS Section */
+/* ... (Previous CSS remains the same) ... */
+
+/* EVENTS Section - Header with Add Button */
+.events-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.events-header h2 {
+    margin: 0;
+    text-align: left;
+}
+
+.add-event-btn {
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+    border: none;
+    border-radius: 8px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.add-event-btn:hover {
+    background-color: #4a6655;
+    transform: translateY(-1px);
+}
+
+.add-event-btn i {
+    pointer-events: none;
+}
+
+/* EVENTS Section - Event Items */
+.event-item {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column; /* Stack name and date */
+    position: relative; /* For positioning delete/expand buttons */
+    overflow: hidden; /* Hide overflowing expanded content */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.event-item:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.event-main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer; /* Indicate it's clickable for expansion */
+    padding-right: 30px; /* Space for the arrow */
+}
+
+.event-name {
+    flex-grow: 1;
+    font-weight: bold;
+    word-break: break-word;
+    min-height: 1.2em; /* Ensure height for empty editable */
+    outline: none;
+    border-bottom: 1px dashed transparent;
+    transition: border-bottom 0.2s ease;
+    padding-bottom: 2px; /* Small space below text */
+}
+
+.event-name:focus {
+    border-bottom: 1px dashed var(--bg-dark-green);
+}
+
+.event-date-time {
+    font-size: 0.8em;
+    color: #555;
+    margin-top: 5px; /* Space between name and date */
+    padding-right: 30px; /* Space for the arrow */
+}
+
+/* Expanded content - initially hidden */
+.event-expanded-details {
+    max-height: 0; /* Collapse height */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    border-top: none;
+    padding-left: 5px; /* Indent details a bit */
+}
+
+.event-item.expanded .event-expanded-details {
+    max-height: 100px; /* Arbitrary max height for expansion */
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin-top: 8px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.event-expanded-details input[type="datetime-local"] {
+    width: calc(100% - 10px);
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+    background-color: var(--panel-light-green);
+    color: var(--text-dark);
+}
+
+.event-expanded-details input[type="datetime-local"]:focus {
+    border-color: var(--bg-dark-green);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(58, 80, 67, 0.2); /* Soft shadow on focus */
+}
+
+/* Buttons inside event item */
+.event-actions {
+    position: absolute;
+    right: 5px;
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column; /* Stack buttons */
+    gap: 3px;
+}
+
+.event-actions button {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 0.9em;
+    cursor: pointer;
+    padding: 3px;
+    border-radius: 50%;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.event-actions button:hover {
+    color: var(--bg-dark-green);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.event-actions .delete-event-btn {
+    color: #c00;
+}
+
+.event-actions .delete-event-btn:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+.event-actions .expand-toggle-btn i {
+    transition: transform 0.2s ease; /* Smooth rotation */
+}
+
+.event-item.expanded .event-actions .expand-toggle-btn i {
+    transform: rotate(90deg); /* Rotate arrow when expanded */
+}
+
+/* Placeholder for editable elements */
+[contenteditable="true"].placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Media Queries Adjustment for Events Section */
+@media (max-width: 768px) {
+    .event-item {
+        padding-right: 15px; /* Adjust padding for smaller screens */
+    }
+
+    .event-actions {
+        top: 8px; /* Adjust top positioning */
+        transform: none; /* Remove translateY */
+        right: 5px;
+        flex-direction: row; /* Buttons side-by-side on smaller screens */
+        gap: 5px;
+    }
+
+    .event-actions button {
+        padding: 5px;
+        font-size: 1.1em;
+    }
+}
+
+/* DATE Display */
+.date-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+/* HABIT BUTTONS */
+.habit-buttons-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows buttons to wrap to next line if needed */
+    justify-content: center;
+    gap: 15px; /* Space between buttons */
+    width: 100%;
+}
+
+.habit-button {
+    background-color: var(--bg-dark-green); /* Darker background for buttons */
+    color: var(--panel-light-green); /* Light text/icon color */
+    border-radius: 10px;
+    padding: 15px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    min-width: 90px; /* Ensure a minimum width */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.habit-button i {
+    font-size: 1.8em; /* Icon size */
+    margin-bottom: 5px;
+}
+
+.habit-button:hover {
+    background-color: #4a6655; /* Slightly lighter dark green on hover */
+    transform: translateY(-2px);
+}
+
+.habit-button.active {
+    background-color: var(--habit-button-active); /* Active state color */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* NOTES Section */
+/* ... (Previous CSS remains the same) ... */
+
+/* NOTES Section - Header with Add Button */
+.notes-header {
+    display: flex;
+    justify-content: space-between; /* Pushes H2 and button to ends */
+    align-items: center;
+    margin-bottom: 15px; /* Adjust spacing below header */
+}
+
+.notes-header h2 {
+    margin: 0; /* Remove default margin from h2 inside flex container */
+    text-align: left; /* Adjust alignment if needed */
+}
+
+.add-note-btn {
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+    border: none;
+    border-radius: 8px;
+    width: 35px; /* Fixed width */
+    height: 35px; /* Fixed height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.add-note-btn:hover {
+    background-color: #4a6655; /* Slightly lighter dark green */
+    transform: translateY(-1px);
+}
+
+.add-note-btn i {
+    pointer-events: none; /* Ensure click goes to button, not icon */
+}
+
+/* NOTES Section - Note Items */
+.note-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px; /* Space between notes */
+    transition: background-color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.note-item:hover {
+    background-color: rgba(0, 0, 0, 0.08); /* Slightly darker on hover */
+}
+
+.note-item input[type="checkbox"] {
+    /* ... (Existing checkbox styles) ... */
+    flex-shrink: 0; /* Prevent checkbox from shrinking */
+}
+
+.note-text {
+    flex-grow: 1; /* Allows text to take available space */
+    min-height: 1.2em; /* Ensure some height for empty lines */
+    padding: 2px 0; /* Add some padding for editing comfort */
+    outline: none; /* Remove default focus outline */
+    border-bottom: 1px dashed transparent; /* Subtle indicator */
+    transition: border-bottom 0.2s ease;
+    word-break: break-word; /* Prevents long words from overflowing */
+}
+
+.note-text:focus {
+    border-bottom: 1px dashed var(--bg-dark-green); /* Show dashed border on focus */
+}
+
+.delete-note-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.delete-note-btn:hover {
+    color: #c00; /* Red on hover */
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+/* Ensure checkbox is correctly styled */
+.note-item input[type="checkbox"] {
+    /* Existing styles for custom checkbox */
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--bg-dark-green);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.note-item input[type="checkbox"]:checked {
+    background-color: var(--bg-dark-green);
+    border-color: var(--bg-dark-green);
+}
+
+.note-item input[type="checkbox"]:checked::after {
+    content: '\2713'; /* Checkmark symbol */
+    font-size: 14px;
+    color: var(--panel-light-green);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* GRAPH Section */
+.graph-placeholder {
+    width: 100%;
+    height: 200px; /* Fixed height for the graph area */
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Border for visual separation */
+    background-color: #f8f8f8; /* Lighter background for the graph area */
+    border-radius: 8px;
+    overflow: hidden; /* Ensure SVG content stays within bounds */
+}
+
+.graph-placeholder svg {
+    display: block; /* Remove extra space below SVG */
+}
+
+/* FLOATING ACTION BUTTON (FAB) */
+.fab-container {
+    position: fixed; /* Fixed position relative to viewport */
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000; /* Ensure it's on top of other content */
+    display: flex;
+    flex-direction: column-reverse; /* Toolkits appear above FAB */
+    align-items: flex-end;
+    gap: 10px; /* Space between toolkits and FAB */
+}
+
+.fab-button {
+    background-color: var(--bg-dark-green); /* Dark green, similar to habit buttons */
+    color: var(--panel-light-green);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%; /* Makes it a circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.fab-button:hover {
+    transform: translateY(-2px);
+    background-color: #4a6655;
+}
+
+.fab-toolkits {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fab-toolkits.hidden {
+    opacity: 0;
+    pointer-events: none; /* Make it unclickable when hidden */
+    transform: translateY(20px); /* Move down slightly when hidden */
+}
+
+.toolkit-item {
+    background-color: var(--panel-light-green); /* Light green for toolkit items */
+    color: var(--bg-dark-green);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.toolkit-item:hover {
+    background-color: #d1e0d0;
+    transform: translateY(-2px);
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+        width: 95%;
+    }
+
+    .tracker-header h1 {
+        font-size: 2.2em;
+    }
+
+    .tracker-main {
+        grid-template-columns: 1fr; /* Single column layout on small screens */
+        grid-template-rows: auto auto auto auto; /* Events, Top Panel, Notes, Graph stacked */
+    }
+
+    .events-section,
+    .top-panel,
+    .notes-section,
+    .graph-section {
+        grid-column: 1 / 2; /* All span full width */
+        grid-row: auto; /* Let content determine row order */
+    }
+}
+
+@media (max-width: 480px) {
+    .tracker-header h1 {
+        font-size: 1.8em;
+    }
+
+    .habit-button {
+        padding: 10px 15px;
+        min-width: 70px;
+    }
+
+    .habit-button i {
+        font-size: 1.5em;
+    }
+
+    .fab-container {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .fab-button {
+        width: 50px;
+        height: 50px;
+        font-size: 1.8em;
+    }
+
+    .toolkit-item {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3em;
+    }
+}
