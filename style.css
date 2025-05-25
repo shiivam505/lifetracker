@@ -1,0 +1,1223 @@
+:root {
+    --bg-dark-green: #3a5043; /* Main background color */
+    --panel-light-green: #e0eadf; /* Panel background color */
+    --text-dark: #333;
+    --text-light: #f0f0f0;
+    --border-radius: 15px;
+    --habit-button-active: #5f7a6f; /* Darker green for active habit buttons */
+    --habit-success-green: #28a745; /* Bright green for successful habit */
+    --expenditure-bar-color: #dc3545; /* Red for expenditure bars */
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark-green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: var(--text-dark);
+}
+
+.container {
+    background-color: var(--bg-dark-green);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    display: grid;
+    grid-template-rows: auto 1fr; /* Header row, then main content */
+    grid-template-columns: 1fr; /* Single column layout for overall structure */
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px; /* Limit max width for desktop view */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative; /* For FAB positioning */
+}
+
+.tracker-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tracker-header h1 {
+    font-family: 'Permanent Marker', cursive; /* Use Google Font */
+    color: var(--panel-light-green);
+    font-size: 3em;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.tracker-main {
+    display: grid;
+    gap: 20px;
+    /* Updated grid layout for new habit analysis section and finance graph */
+    grid-template-areas:
+        "events top-panel top-panel"
+        "notes-panel finance-panel finance-panel" /* Notes moved below events, finance spans 2 columns */
+        "habit-analysis-panel habit-analysis-panel habit-analysis-panel"; /* Habit analysis spans all 3 columns */
+    grid-template-columns: 1fr 1.5fr 1.5fr; /* 3 columns */
+    grid-template-rows: auto auto auto; /* 3 rows: Header, Middle, Bottom */
+}
+
+.panel {
+    background-color: var(--panel-light-green);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific panel grid placement */
+.events-section {
+    grid-area: events; /* Assigned to grid area */
+}
+
+/* EVENTS Section */
+
+.events-header {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.events-header h2 {
+    margin: 0;
+    text-align: left;
+}
+
+.add-event-btn {
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+    border: none;
+    border-radius: 8px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.add-event-btn:hover {
+    background-color: #4a6655;
+    transform: translateY(-1px);
+}
+
+.add-event-btn i {
+    pointer-events: none;
+}
+
+/* FIX 1: Fixed medium size for events section with scrolling */
+.events-section {
+    height: 400px; /* Fixed height for the events section */
+    display: flex;
+    flex-direction: column;
+}
+
+.event-list {
+    flex-grow: 1; /* Allows the list to take remaining height */
+    overflow-y: auto; /* Enables vertical scrolling */
+    padding-right: 5px; /* Space for scrollbar */
+}
+
+/* Custom scrollbar for webkit browsers */
+.event-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.event-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.event-list::-webkit-scrollbar-thumb {
+    background: var(--bg-dark-green);
+    border-radius: 10px;
+}
+
+.event-list::-webkit-scrollbar-thumb:hover {
+    background: #4a6655;
+}
+
+
+/* EVENTS Section - Event Items */
+.event-item {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column; /* Stack name and date */
+    position: relative; /* For positioning delete/expand buttons */
+    overflow: hidden;/* Hide overflowing expanded content*/
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.event-item:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.event-main-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer; /* Indicate it's clickable for expansion */
+    padding-right: 30px; /* Space for the arrow */
+}
+
+.event-name {
+    flex-grow: 1;
+    font-weight: bold;
+    word-break: break-word;
+    min-height: 1.2em; /* Ensure height for empty editable */
+    outline: none;
+    border-bottom: 1px dashed transparent;
+    transition: border-bottom 0.2s ease;
+    padding-bottom: 2px; /* Small space below text */
+}
+
+.event-name:focus {
+    border-bottom: 1px dashed var(--bg-dark-green);
+}
+
+.event-date-time {
+    font-size: 0.8em;
+    color: #555;
+    margin-top: 5px; /* Space between name and date */
+    padding-right: 30px; /* Space for the arrow */
+}
+
+/* Expanded content - initially hidden */
+.event-expanded-details {
+    max-height: 0; /* Collapse height */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    border-top: none;
+    padding-left: 5px; /* Indent details a bit */
+}
+
+.event-item.expanded .event-expanded-details {
+    max-height: 100px; /* Arbitrary max height for expansion */
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin-top: 8px;
+    border-top: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+.event-expanded-details input[type="datetime-local"] {
+    width: calc(100% - 10px);
+    padding: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9em;
+    margin-bottom: 8px;
+    background-color: var(--panel-light-green);
+    color: var(--text-dark);
+}
+
+.event-expanded-details input[type="datetime-local"]:focus {
+    border-color: var(--bg-dark-green);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(58, 80, 67, 0.2); /* Soft shadow on focus */
+}
+
+/* Buttons inside event item */
+.event-actions {
+    position: absolute;
+    right: 5px;
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column; /* Stack buttons */
+    gap: 3px;
+}
+
+.event-actions button {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 0.9em;
+    cursor: pointer;
+    padding: 3px;
+    border-radius: 50%;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.event-actions button:hover {
+    color: var(--bg-dark-green);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.event-actions .delete-event-btn {
+    color: #c00;
+}
+
+.event-actions .delete-event-btn:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+.event-actions .expand-toggle-btn i {
+    transition: transform 0.2s ease; /* Smooth rotation */
+}
+
+.event-item.expanded .event-actions .expand-toggle-btn i {
+    transform: rotate(90deg); /* Rotate arrow when expanded */
+}
+
+/* Placeholder for editable elements */
+.event-name.is-placeholder {
+    color: rgba(153, 153, 153, 0.7); /* Lighter gray with 70% opacity */
+    font-style: italic; /* Optional: keep it italic as before */
+}
+
+
+/* EVENTS Section - Header with Add Button */
+.events-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.events-header h2 {
+    margin: 0;
+    text-align: left;
+}
+
+.add-event-btn {
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+    border: none;
+    border-radius: 8px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.add-event-btn:hover {
+    background-color: #4a6655;
+    transform: translateY(-1px);
+}
+
+.add-event-btn i {
+    pointer-events: none;
+}
+
+.top-panel {
+    grid-area: top-panel; /* Assigned to grid area */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.finance-section {
+    grid-area: finance-panel; /* Assigned to grid area */
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* Ensure vertical stacking of content */
+    gap: 15px;
+}
+
+.notes-section {
+    grid-area: notes-panel; /* Assigned to grid area */
+    padding: 20px;
+    height: 400px; /* Fixed height for the notes section */
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}
+/* NOTES Section */
+
+.notes-header {
+
+    display: flex;
+    justify-content: space-between; /* Pushes H2 and button to ends */
+    align-items: center;
+    margin-bottom: 15px; /* Adjust spacing below header */
+}
+
+.notes-header h2 {
+    margin: 0; /* Remove default margin from h2 inside flex container */
+    text-align: left; /* Adjust alignment if needed */
+}
+
+.add-note-btn {
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+    border: none;
+    border-radius: 8px;
+    width: 35px; /* Fixed width */
+    height: 35px; /* Fixed height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.add-note-btn:hover {
+    background-color: #4a6655; /* Slightly lighter dark green */
+    transform: translateY(-1px);
+}
+
+.add-note-btn i {
+    pointer-events: none; /* Ensure click goes to button, not icon */
+}
+
+/* NOTES Section - Note Items */
+.note-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px; /* Space between notes */
+    transition: background-color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.note-item:hover {
+    background-color: rgba(0, 0, 0, 0.08); /* Slightly darker on hover */
+}
+
+.note-item input[type="checkbox"] {
+    flex-shrink: 0; /* Prevent checkbox from shrinking */
+}
+
+.note-text {
+    flex-grow: 1; /* Allows text to take available space */
+    min-height: 1.2em; /* Ensure some height for empty lines */
+    padding: 2px 0; /* Add some padding for editing comfort */
+    outline: none; /* Remove default focus outline */
+    border-bottom: 1px dashed transparent; /* Subtle indicator */
+    transition: border-bottom 0.2s ease;
+    word-break: break-word; /* Prevents long words from overflowing */
+}
+
+.note-text:focus {
+    border-bottom: 1px dashed var(--bg-dark-green); /* Show dashed border on focus */
+}
+
+.delete-note-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.delete-note-btn:hover {
+    color: #c00; /* Red on hover */
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+/* Ensure checkbox is correctly styled */
+.note-item input[type="checkbox"] {
+    /* Existing styles for custom checkbox */
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--bg-dark-green);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.note-item input[type="checkbox"]:checked {
+    background-color: var(--bg-dark-green);
+    border-color: var(--bg-dark-green);
+}
+
+.note-item input[type="checkbox"]:checked::after {
+    content: '\2713'; /* Checkmark symbol */
+    font-size: 14px;
+    color: var(--panel-light-green);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Add scrollbar styles to note-list */
+.note-list {
+    max-height: 300px; /* Adjust as needed to fit the section's height */
+    overflow-y: auto;
+    padding-right: 5px; /* Space for scrollbar */
+}
+
+.note-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.note-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.note-list::-webkit-scrollbar-thumb {
+    background: var(--bg-dark-green);
+    border-radius: 10px;
+}
+
+.note-list::-webkit-scrollbar-thumb:hover {
+    background: #4a6655;
+}
+
+/* Expenditure Graph Section - now nested within finance-section */
+.graph-placeholder { /* This class is now used for both finance and habit graphs */
+    width: 100%;
+    height: 250px; /* Fixed height for the graph area */
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Border for visual separation */
+    background-color: #d1e0d0; /* Lighter background for the graph area */
+    border-radius: 8px;
+    overflow: hidden; /* Ensure SVG content stays within bounds */
+    display: flex; /* To center SVG content */
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px; /* Space from the button above it */
+}
+
+.graph-placeholder svg {
+    display: block; /* Remove extra space below SVG */
+}
+
+/* Styling for the dynamically generated expenditure graph (now a bar chart) */
+.expenditure-graph .axis {
+    stroke: #333; /* Darker for axes */
+    stroke-width: 1.5;
+}
+
+.expenditure-graph .grid-line {
+    stroke: #ccc;
+    stroke-width: 0.5;
+    stroke-dasharray: 2 2;
+}
+
+.expenditure-graph .bar { /* Style for expenditure bars */
+    fill: var(--expenditure-bar-color); /* Red for expenditure */
+    transition: fill 0.2s ease;
+}
+
+.expenditure-graph .bar:hover {
+    fill: #b02a37; /* Darker red on hover */
+}
+
+.expenditure-graph text {
+    font-family: Arial, sans-serif; /* Changed to Arial for consistency with numbers */
+    font-size: 10px;
+    fill: #555;
+}
+
+.graph-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    pointer-events: none; /* Crucial: ensures it doesn't block mouse events on SVG */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+    z-index: 1000; /* Ensure it's above other elements */
+}
+
+.graph-tooltip.visible {
+    opacity: 1;
+}
+/* HABIT BUTTONS */
+
+.habit-buttons-container {
+
+    display: flex;
+    flex-wrap: wrap; /* Allows buttons to wrap to next line if needed */
+    justify-content: center;
+    gap: 15px; /* Space between buttons */
+    width: 100%;
+}
+
+.habit-button {
+    background-color: var(--bg-dark-green); /* Darker background for buttons */
+    color: var(--panel-light-green); /* Light text/icon color */
+    border-radius: 10px;
+    padding: 15px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    min-width: 90px; /* Ensure a minimum width */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.habit-button i {
+    font-size: 1.8em; /* Icon size */
+    margin-bottom: 5px;
+}
+
+.habit-button:hover {
+    background-color: #4a6655; /* Slightly lighter dark green on hover */
+    transform: translateY(-2px);
+}
+
+.habit-button.active {
+    background-color: var(--habit-button-active); /* Active state color */
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.habit-button.completed-today {
+    background-color: var(--habit-success-green); /* Green for successful completion */
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); /* Green glow */
+    color: white; /* Ensure text is readable */
+}
+
+/* New Habit Analysis Section */
+.habit-analysis-section {
+    grid-area: habit-analysis-panel; /* Assigned to grid area */
+    background-color: var(--panel-light-green);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Habit Analysis Graph Styling */
+.habit-analysis-graph-container {
+    width: 100%;
+    height: 250px; /* Fixed height for the habit graph */
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: #d1e0d0;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.habit-analysis-graph-container svg {
+    display: block;
+}
+
+.habit-analysis-graph .bar {
+    fill: var(--habit-success-green);
+    transition: fill 0.2s ease;
+}
+
+.habit-analysis-graph .bar:hover {
+    fill: #1e7e34; /* Darker green on hover */
+}
+
+.habit-analysis-graph .axis {
+    stroke: #333;
+    stroke-width: 1.5;
+}
+
+.habit-analysis-graph text {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    fill: #555;
+}
+
+.habit-analysis-graph .grid-line {
+    stroke: #ccc;
+    stroke-width: 0.5;
+    stroke-dasharray: 2 2;
+}
+
+
+/* FLOATING ACTION BUTTON (FAB) */
+.fab-container {
+    position: fixed; /* Fixed position relative to viewport */
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000; /* Ensure it's on top of other content */
+    display: flex;
+    flex-direction: column-reverse; /* Toolkits appear above FAB */
+    align-items: flex-end;
+    gap: 10px; /* Space between toolkits and FAB */
+}
+
+.fab-button {
+    background-color: var(--bg-dark-green); /* Dark green, similar to habit buttons */
+    color: var(--panel-light-green);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%; /* Makes it a circle */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.fab-button:hover {
+    transform: translateY(-2px);
+    background-color: #4a6655;
+}
+
+.fab-toolkits {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fab-toolkits.hidden {
+    opacity: 0;
+    pointer-events: none; /* Make it unclickable when hidden */
+    transform: translateY(20px); /* Move down slightly when hidden */
+}
+
+.toolkit-item {
+    background-color: var(--panel-light-green); /* Light green for toolkit items */
+    color: var(--bg-dark-green);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.toolkit-item:hover {
+    background-color: #d1e0d0;
+    transform: translateY(-2px);
+}
+
+/* FINANCE Section Styling */
+.finance-section {
+    background-color: var(--panel-light-green);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.finance-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed rgba(0,0,0,0.1);
+}
+
+.balance-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.balance-display .icon-button {
+    background: none;
+    border: none;
+    color: var(--bg-dark-green);
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.balance-display .icon-button:hover {
+    transform: translateY(2px);
+}
+
+.balance-display .icon-button i {
+    font-size: 0.8em; /* Make the chevron slightly smaller */
+}
+
+
+.transaction-buttons {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+.finance-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    flex-grow: 1; /* Make buttons expand */
+    max-width: 150px; /* Limit their max width */
+    color: black; /* Default text color for finance buttons */
+}
+
+.finance-btn.add {
+    background-color: #4CAF50; /* Green for add */
+}
+.finance-btn.add:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+.finance-btn.spent {
+    background-color: #F44336; /* Red for spent */
+}
+.finance-btn.spent:hover {
+    background-color: #da190b;
+    transform: translateY(-2px);
+}
+
+.finance-btn.confirm {
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+}
+.finance-btn.confirm:hover {
+    background-color: #4a6655;
+    transform: translateY(-2px);
+}
+
+.finance-btn.cancel {
+    background-color: #aaa;
+    color: white;
+}
+.finance-btn.cancel:hover {
+    background-color: #999;
+    transform: translateY(-2px);
+}
+
+.finance-btn.add-small { /* For 'Add New Account' button and 'Toggle Finance Graph' */
+    padding: 8px 15px;
+    font-size: 0.9em;
+    max-width: none;
+    margin-top: 10px;
+}
+
+
+/* Transaction Input Area */
+.transaction-input-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-bottom: 1px dashed rgba(0,0,0,0.1);
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.transaction-input-area input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    background-color: white;
+    color: var(--text-dark);
+}
+
+.transaction-input-area input:focus {
+    border-color: var(--bg-dark-green);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(58, 80, 67, 0.2);
+}
+
+/* History List */
+.finance-history h3 {
+    text-align: center;
+    color: var(--text-dark);
+    font-size: 1.2em;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.finance-history h3 i {
+    margin-right: 5px;
+    color: var(--bg-dark-green);
+}
+
+.history-list {
+    max-height: 150px; /* Limit height and make scrollable */
+    overflow-y: auto;
+    padding-right: 5px; /* Space for scrollbar */
+}
+.history-item {
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.history-item.add .amount {
+    color: #28a745; /* Green for added amount */
+}
+
+.history-item.spent .amount {
+    color: #dc3545; /* Red for spent amount */
+}
+
+.history-item .title {
+    flex-grow: 1;
+    font-size: 0.9em;
+    color: var(--text-dark);
+}
+
+.history-item .amount {
+    font-weight: bold;
+    font-size: 1em;
+    margin-left: 10px;
+    min-width: 70px; /* Ensure space for amount */
+    text-align: right;
+}
+
+.history-item .date {
+    font-size: 0.7em;
+    color: #777;
+    margin-left: 10px;
+    text-align: right;
+    min-width: 60px;
+}
+
+
+/* Custom scrollbar for webkit browsers for history list */
+.history-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: var(--bg-dark-green);
+    border-radius: 10px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+    background: #4a6655;
+}
+
+
+/* MODAL Styling */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Above FAB */
+}
+
+.modal.hidden {
+    display: none;
+}
+.hidden {
+   display: none;
+}
+
+.modal-content {
+    background-color: var(--panel-light-green);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: var(--text-dark);
+}
+
+.modal-content input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    background-color: white;
+    color: var(--text-dark);
+}
+
+.modal-content input:focus {
+    border-color: var(--bg-dark-green);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(58, 80, 67, 0.2);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    flex-grow: 1;
+}
+
+.modal-btn.confirm {
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+}
+.modal-btn.confirm:hover {
+    background-color: #4a6655;
+    transform: translateY(-2px);
+}
+
+.modal-btn.cancel {
+    background-color: #aaa;
+    color: white;
+}
+.modal-btn.cancel:hover {
+    background-color: #999;
+    transform: translateY(-2px);
+}
+
+/* Account List in Modal */
+#account-list-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.account-item-modal {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.account-item-modal:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+.account-item-modal.selected {
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.account-item-modal.selected .account-balance {
+    color: var(--panel-light-green); /* Keep balance readable */
+}
+
+.account-name {
+    font-weight: bold;
+}
+
+.account-balance {
+    font-size: 0.9em;
+    color: #555;
+}
+
+/* New Habit Tracker Heading */
+.habit-tracker-heading h2 {
+    font-size: 1.8em;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+/* Add More Habits Button */
+#add-more-habits-btn {
+    margin-top: 20px;
+    background-color: var(--bg-dark-green);
+    color: var(--panel-light-green);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#add-more-habits-btn:hover {
+    background-color: #4a6655;
+    transform: translateY(-2px);
+}
+
+/* Modal Hint for Font Awesome */
+.modal-hint {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+.modal-hint a {
+    color: var(--bg-dark-green);
+    text-decoration: none;
+}
+.modal-hint a:hover {
+    text-decoration: underline;
+}
+
+/* All Habits List in Modal */
+.habit-list-modal {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 5px; /* Space for scrollbar */
+    text-align: left;
+}
+
+.habit-list-modal li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.habit-list-modal li i {
+    margin-right: 10px;
+    color: var(--bg-dark-green);
+}
+
+.habit-list-modal li .habit-name-display {
+    flex-grow: 1;
+    font-weight: bold;
+}
+
+.habit-list-modal li .delete-habit-item-btn {
+    background: none;
+    border: none;
+    color: #dc3545; /* Red for delete */
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.habit-list-modal li .delete-habit-item-btn:hover {
+    background-color: rgba(220, 53, 69, 0.2);
+}
+
+
+/* Media Queries for Responsiveness (adjusting for new finance section) */
+@media (max-width: 768px) {
+    .tracker-main {
+        grid-template-areas:
+            "events"
+            "notes-panel" /* Notes moved here */
+            "top-panel"
+            "finance-panel"
+            "habit-analysis-panel";
+        grid-template-columns: 1fr; /* Single column */
+        grid-template-rows: auto auto auto auto auto; /* Stack all sections */
+    }
+
+    .events-section,
+    .top-panel,
+    .finance-section,
+    .notes-section,
+    .habit-analysis-section {
+        grid-column: auto;
+        grid-row: auto;
+        padding: 15px; /* Adjust padding for smaller screens */
+        height: auto; /* Allow height to be determined by content */
+    }
+
+    .finance-btn {
+        padding: 8px 15px;
+        font-size: 1em;
+    }
+
+    .events-section,
+    .notes-section { /* Apply fixed height to notes section on mobile too */
+        height: 300px; /* Adjust height for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .finance-btn {
+        font-size: 0.9em;
+    }
+
+    .transaction-buttons {
+        flex-direction: column; /* Stack add/spent buttons */
+    }
+    .finance-btn {
+        max-width: none; /* Let them take full width when stacked */
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+
+    .modal-btn {
+        font-size: 0.9em;
+    }
+}
